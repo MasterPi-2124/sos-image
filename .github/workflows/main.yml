@@ -38,7 +38,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           cd rpi/lite
-          ./build.sh
+          sudo ./build.sh
       - name: Compress
         run: |
           xz -T rpi/lite/images/sos-lite.img
