@@ -19,7 +19,7 @@ set -exo pipefail
 set -o xtrace
 
 # Get rootfs
-aria2c -x15 http://sg.mirror.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+aria2c -x15 http://sg.mirror.archlinuxarm.org/os/rpi/ArchLinuxARM-2021.07-rpi-aarch64-rootfs.tar.gz
 
 # BUILD IMAGE
 docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --progress plain --load ../..

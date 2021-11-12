@@ -1,7 +1,7 @@
 FROM scratch
 
 # Add and decompress Arch Linux ARM rpi arm64 rootfs at /
-ADD rpi/lite/ArchLinuxARM-rpi-aarch64-latest.tar.gz /
+ADD rpi/lite/ArchLinuxARM-2021.07-rpi-aarch64-rootfs.tar.gz /
 
 # Pacman Keyring
 # Don't check disk space because we are in a container
