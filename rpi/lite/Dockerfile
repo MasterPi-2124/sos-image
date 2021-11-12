@@ -1,14 +1,16 @@
 FROM scratch
 
 # Add and decompress Arch Linux ARM rpi arm64 rootfs at /
-ADD rpi/lite/ArchLinuxARM-rpi-aarch64-latest.tar.gz /
+ADD rpi/lite/ArchLinuxARM-2021.07-rpi-aarch64-rootfs.tar.gz /
 
 # Pacman Keyring
 # Don't check disk space because we are in a container
 # FINISH GETTING PACMAN TO LIFE
 # Get and install rpi 4 kernel
 # Don't check disk space because we are in a container
-
+RUN sed -i -e "s/^CheckSpace/#!!!CheckSpace/g" /etc/pacman.conf && \
+RUN	pacman-key --init
+RUN pacman-key --populate archlinuxarm
 RUN pacman-db-upgrade
 RUN pacman -R --noconfirm openssh linux-aarch64 uboot-raspberrypi
 RUN pacman -Syy --noconfirm wget     \
