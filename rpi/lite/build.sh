@@ -12,8 +12,6 @@
 # Reasonable build targets include: https://archlinuxarm.org/platforms/armv8
 # For example, the Odroid-N2 is the same software-wise as our Router!
 
-# Fail on error
-set -exo pipefail
 
 # Print each command
 set -o xtrace
@@ -22,14 +20,11 @@ set -o xtrace
 aria2c -x15 http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
 # BUILD IMAGE
-docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --progress plain --load ../..
+docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --load ../..
 
 # TAG AND PUSH
 docker tag sos-lite ghcr.io/faddat/sos-lite
 docker push ghcr.io/faddat/sos-lite
-
-# PREPARE TOOLBOX
-# docker buildx build --rm --tag toolbox --file toolbox/Dockerfile --load  --progress plain toolbox
 
 # EXTRACT IMAGE
 # Make a temporary directory
