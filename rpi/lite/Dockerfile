@@ -8,8 +8,7 @@ ADD rpi/lite/ArchLinuxARM-rpi-aarch64-latest.tar.gz /
 # FINISH GETTING PACMAN TO LIFE
 # Get and install rpi 4 kernel
 # Don't check disk space because we are in a container
-RUN	pacman-key --init
-RUN pacman-key --populate archlinuxarm
+
 RUN pacman-db-upgrade
 RUN pacman -R --noconfirm openssh linux-aarch64 uboot-raspberrypi
 RUN pacman -Syy --noconfirm wget     \
