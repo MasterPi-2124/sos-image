@@ -1,44 +1,65 @@
-#!/bin/bash
 
-# Print all commands
+
+#!/bin/bash
+# =======================================================================
+# SOS image builder
+# =======================================================================
+
+
+# This process uses tools and a design pattern first developed by the pikvm team for their pi-builder and os tools.
+# the biggest differences between this process and theirs are:
+# * we use docker buildx so we don't need to deal with qemu directly.
+# * we are not offering as many choices to users and are designing around automation.
+# Later we can make this work for more devices and platforms with nearly the same technique.
+# Reasonable build targets include: https://archlinuxarm.org/platforms/armv8
+# For example, the Odroid-N2 is the same software-wise as our Router!
+
+# Fail on error
+set -exo pipefail
+
+# Print each command
 set -o xtrace
 
-# Get the ArchARM image
+# Get rootfs
 aria2c -x15 http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-4-latest.tar.gz
 
-# Build image
-docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 .
+# BUILD IMAGE
+docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --progress plain --load ../..
 
-# Extract image
-mkdir tmp
+# TAG AND PUSH
+docker tag sos-lite ghcr.io/faddat/sos-lite
+docker push ghcr.io/faddat/sos-lite
+
+# PREPARE TOOLBOX
+# docker buildx build --rm --tag toolbox --file toolbox/Dockerfile --load  --progress plain toolbox
+
+# EXTRACT IMAGE
+# Make a temporary directory
+rm -rf .tmp | true
+mkdir .tmp
+
+# remove anything in the way of extraction
+docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. faddat/toolbox rm -rf ./.tmp/result-rootfs
 
 # save the image to result-rootfs.tar
-docker save --output ./tmp/result-rootfs.tar sos-lite
+docker save --output ./.tmp/result-rootfs.tar sos-lite
 
-docker run --rm --tty --volume $(pwd)/./tmp:/root/./tmp --workdir /root/./tmp/.. faddat/toolbox /tools/docker-extract --root ./tmp/result-rootfs  ./tmp/result-rootfs.tar
+# Extract the image using docker-extract
+docker run --rm --tty --volume $(pwd)/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. faddat/toolbox /tools/docker-extract --root ./.tmp/result-rootfs  ./.tmp/result-rootfs.tar
 
 # Delete tarball to save space
-rm ./tmp/result-rootfs.tar
+rm ./.tmp/result-rootfs.tar
 
-# Unmount anything on the loop device
-sudo umount /dev/loop0p2 || true
-sudo umount /dev/loop0p1 || true
-
-
-# Detach from the loop device
-sudo losetup -d /dev/loop0 || true
-
-# Unmount anything on the loop device
-sudo umount /dev/loop0p2 || true
-sudo umount /dev/loop0p1 || true
+# Set hostname while the image is just in the filesystem.
+sudo bash -c "echo sos > ./.tmp/result-rootfs/etc/hostname"
 
 
-# Create a folder for images
-rm -rf images || true
-mkdir -p images
+# ===================================================================================
+# IMAGE: Make a .img file and compress it.
+# Uses Techniques from Disconnected Systems:
+# https://disconnected.systems/blog/raspberry-pi-archlinuxarm-setup/
+# ===================================================================================
 
-# Make the image file
-fallocate -l 4G "images/sos-lite.img"
 
 # Unmount anything on the loop device
 sudo umount /dev/loop0p2 || true
