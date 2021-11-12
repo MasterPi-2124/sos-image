@@ -19,15 +19,17 @@ set -exo pipefail
 set -o xtrace
 
 # Get rootfs
-aria2c -x15 http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
-
+wget -N --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
 
 # BUILD IMAGE
-docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --load ../..
+docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --progress plain --load ../..
 
 # TAG AND PUSH
 docker tag sos-lite ghcr.io/faddat/sos-lite
 docker push ghcr.io/faddat/sos-lite
+
+# PREPARE TOOLBOX
+# docker buildx build --rm --tag toolbox --file toolbox/Dockerfile --load  --progress plain toolbox
 
 # EXTRACT IMAGE
 # Make a temporary directory
@@ -112,4 +114,3 @@ sudo losetup -d $LOOP
 # Delete .tmp and mnt
 sudo rm -rf ./.tmp
 sudo rm -rf mnt
-
