@@ -41,7 +41,7 @@ jobs:
           sudo bash build.sh
       - name: Compress
         run: |
-          xz -T rpi/lite/images/sos-lite.img
+          xz -T $(nproc) rpi/lite/images/sos-lite.img
           
       - name: Upload image
         uses: actions/upload-artifact@v2
