@@ -12,6 +12,8 @@
 # Reasonable build targets include: https://archlinuxarm.org/platforms/armv8
 # For example, the Odroid-N2 is the same software-wise as our Router!
 
+# Fail on error
+set -exo pipefail
 
 # Print each command
 set -o xtrace
