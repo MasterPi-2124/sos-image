@@ -24,13 +24,6 @@ wget -N --progress=bar:force:noscroll http://os.archlinuxarm.org/os/ArchLinuxARM
 # BUILD IMAGE
 docker buildx build --tag sos-lite --file Dockerfile --platform linux/arm64 --progress plain --load ../..
 
-# TAG AND PUSH
-docker tag sos-lite ghcr.io/faddat/sos-lite
-docker push ghcr.io/faddat/sos-lite
-
-# PREPARE TOOLBOX
-# docker buildx build --rm --tag toolbox --file toolbox/Dockerfile --load  --progress plain toolbox
-
 # EXTRACT IMAGE
 # Make a temporary directory
 rm -rf .tmp | true
