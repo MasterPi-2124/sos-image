@@ -14,8 +14,8 @@ ADD rpi/lite/ArchLinuxARM-rpi-4-latest.tar.gz /
 RUN	pacman-key --init && \
     pacman-key --populate archlinuxarm && \
     pacman-db-upgrade && \
-    pacman -R --noconfirm openssh linux-aarch64 uboot-raspberrypi && \
-	pacman -Syy --noconfirm wget     \
+    pacman -R --noconfirm openssh linux-aarch64 uboot-raspberrypi
+RUN pacman -Syy --noconfirm wget     \
 				archlinux-keyring     \
 				ca-certificates        \
 				ca-certificates-mozilla \
