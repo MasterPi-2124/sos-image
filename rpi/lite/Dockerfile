@@ -1,11 +1,10 @@
-#!/bin/bash
 # Start with nothing
 FROM scratch
 
 MAINTAINER jacobgadikian@gmail.com
 
 # Add and decompress Arch Linux ARM rpi arm64 rootfs at /
-ADD rpi/lite/ArchLinuxARM-rpi-4-latest.tar.gz /
+ADD rpi/lite/ArchLinuxARM-2021.07-rpi-4-rootfs.tar.gz /
 
 # Pacman Keyring
 # Don't check disk space because we are in a container
